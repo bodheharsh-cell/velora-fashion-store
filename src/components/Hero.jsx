@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 function Hero() {
   return (
-    <div className="relative h-[70vh] md:h-[90vh] w-full bg-gray-100 overflow-hidden">
+    <div className="relative h-[70vh] md:h-[90vh] w-full bg-gray-100 overflow-hidden mt-20">
       <img 
         src="/hero_img_1778924780520.png" 
         alt="Hero fashion" 

@@ -1,4 +1,5 @@
 import { createContext, useState, useContext } from 'react';
+import toast from 'react-hot-toast';
 
 const ShopContext = createContext();
 
@@ -18,6 +19,8 @@ export const ShopProvider = ({ children }) => {
         item.id === product.id && item.selectedSize === size && item.selectedColor === color
       );
 
+      toast.success('Added to bag');
+
       if (existingItemIndex >= 0) {
         const newItems = [...prev];
         newItems[existingItemIndex].quantity += quantity;
@@ -32,6 +35,7 @@ export const ShopProvider = ({ children }) => {
 
   const removeFromCart = (cartItemId) => {
     setCartItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
+    toast.success('Removed from bag');
   };
 
   const updateQuantity = (cartItemId, delta) => {
@@ -51,14 +55,17 @@ export const ShopProvider = ({ children }) => {
     setWishlistItems(prev => {
       const exists = prev.some(item => item.id === product.id);
       if (exists) {
+        toast.success('Removed from wishlist');
         return prev.filter(item => item.id !== product.id);
       }
+      toast.success('Added to wishlist');
       return [...prev, product];
     });
   };
 
   const removeFromWishlist = (id) => {
     setWishlistItems(prev => prev.filter(item => item.id !== id));
+    toast.success('Removed from wishlist');
   };
 
   const moveToCart = (product) => {

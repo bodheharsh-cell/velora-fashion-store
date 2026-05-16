@@ -37,41 +37,73 @@ function Cart() {
 
             <div className="divide-y divide-gray-100">
               {cartItems.map(item => (
-                <div key={item.id} className="py-8 flex flex-col sm:grid sm:grid-cols-12 sm:items-center gap-6">
-                  {/* Product */}
-                  <div className="col-span-6 flex gap-6">
-                    <div className="w-24 h-32 flex-shrink-0 bg-gray-50">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex flex-col justify-center">
-                      <h3 className="text-sm font-semibold tracking-wide uppercase mb-1">{item.name}</h3>
-                      <p className="text-sm text-gray-500">${item.price}</p>
-                    </div>
+                <div key={item.id} className="py-8 flex flex-col sm:grid sm:grid-cols-12 sm:items-center gap-4 sm:gap-6 border-b border-gray-100 last:border-0 relative">
+                  {/* Mobile Layout */}
+                  <div className="flex gap-4 sm:hidden w-full">
+                     <div className="w-24 h-32 flex-shrink-0 bg-gray-50">
+                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                     </div>
+                     <div className="flex flex-col flex-1 justify-between py-1">
+                        <div className="flex justify-between items-start">
+                           <div>
+                              <h3 className="text-sm font-semibold tracking-wide uppercase mb-1">{item.name}</h3>
+                              <p className="text-sm text-gray-500">${item.price}</p>
+                           </div>
+                           <button onClick={() => removeFromCart(item.cartItemId)} className="text-gray-400 hover:text-black transition-colors p-1 -mt-1 -mr-1">
+                             <X size={20} strokeWidth={1} />
+                           </button>
+                        </div>
+                        
+                        <div className="flex justify-between items-end mt-auto">
+                           <div className="flex items-center border border-gray-300 w-24 h-8">
+                             <button onClick={() => updateQuantity(item.cartItemId, -1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
+                               <Minus size={14} />
+                             </button>
+                             <span className="text-sm font-medium w-8 text-center">{item.quantity}</span>
+                             <button onClick={() => updateQuantity(item.cartItemId, 1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
+                               <Plus size={14} />
+                             </button>
+                           </div>
+                           <div className="text-sm font-semibold">
+                             ${item.price * item.quantity}
+                           </div>
+                        </div>
+                     </div>
                   </div>
 
-                  {/* Quantity */}
-                  <div className="col-span-2 flex items-center justify-start sm:justify-center mt-4 sm:mt-0">
-                    <div className="flex items-center border border-gray-300 w-24 h-10">
-                      <button onClick={() => updateQuantity(item.cartItemId, -1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
-                        <Minus size={14} />
+                  {/* Desktop Layout */}
+                  <div className="hidden sm:contents">
+                    <div className="col-span-6 flex gap-6">
+                      <div className="w-24 h-32 flex-shrink-0 bg-gray-50">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <h3 className="text-sm font-semibold tracking-wide uppercase mb-1">{item.name}</h3>
+                        <p className="text-sm text-gray-500">${item.price}</p>
+                      </div>
+                    </div>
+
+                    <div className="col-span-2 flex items-center justify-center">
+                      <div className="flex items-center border border-gray-300 w-24 h-10">
+                        <button onClick={() => updateQuantity(item.cartItemId, -1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
+                          <Minus size={14} />
+                        </button>
+                        <span className="text-sm font-medium w-8 text-center">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.cartItemId, 1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="col-span-2 text-right text-sm font-semibold">
+                      ${item.price * item.quantity}
+                    </div>
+
+                    <div className="col-span-2 flex justify-end">
+                      <button onClick={() => removeFromCart(item.cartItemId)} className="text-gray-400 hover:text-black transition-colors p-2 m-0">
+                        <X size={20} strokeWidth={1} />
                       </button>
-                      <span className="text-sm font-medium w-8 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.cartItemId, 1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
-                        <Plus size={14} />
-                      </button>
                     </div>
-                  </div>
-
-                  {/* Total */}
-                  <div className="col-span-2 text-left sm:text-right text-sm font-semibold mt-2 sm:mt-0">
-                    ${item.price * item.quantity}
-                  </div>
-
-                  {/* Remove */}
-                  <div className="col-span-2 flex justify-end absolute sm:static right-0 top-0 sm:right-auto sm:top-auto">
-                    <button onClick={() => removeFromCart(item.cartItemId)} className="text-gray-400 hover:text-black transition-colors p-2 -mt-2 -mr-2 sm:m-0">
-                      <X size={20} strokeWidth={1} />
-                    </button>
                   </div>
                 </div>
               ))}

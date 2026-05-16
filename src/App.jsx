@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -17,6 +18,22 @@ function App() {
   return (
     <ShopProvider>
       <Router>
+        <Toaster 
+          position="bottom-center"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#000',
+              color: '#fff',
+              borderRadius: '0px',
+              fontSize: '12px',
+              padding: '16px 24px',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            },
+          }}
+        />
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
