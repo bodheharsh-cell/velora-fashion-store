@@ -85,12 +85,24 @@ function Navbar() {
         {/* Slide-in Menu */}
         <div className={`absolute top-0 left-0 w-[85%] max-w-sm h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="p-8 flex flex-col h-full">
-            <div className="flex items-center justify-between mb-12 border-b border-gray-100 pb-6">
+            <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
               <span className="text-xl font-bold tracking-tighter uppercase">ÉLÉGANCE</span>
               <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400 hover:text-black transition-colors">
                 <X size={24} strokeWidth={1} />
               </button>
             </div>
+
+            {/* Mobile Search Trigger */}
+            <button 
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setIsSearchOpen(true);
+              }}
+              className="flex items-center justify-between w-full bg-gray-50 p-4 mb-8 text-left hover:bg-gray-100 transition-colors"
+            >
+              <span className="text-sm font-medium tracking-widest uppercase text-gray-500">Search Products</span>
+              <Search size={20} className="text-gray-400" strokeWidth={1.5} />
+            </button>
 
             <div className="flex flex-col space-y-6 flex-1">
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-light tracking-wide uppercase hover:text-gray-500 transition-colors">Home</Link>
