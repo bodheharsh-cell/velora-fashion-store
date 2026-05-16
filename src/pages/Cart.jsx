@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Minus, Plus, X } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { formatPrice } from '../utils/formatPrice';
 
 function Cart() {
   const { cartItems, updateQuantity, removeFromCart, cartTotal } = useShop();
@@ -47,7 +48,7 @@ function Cart() {
                         <div className="flex justify-between items-start">
                            <div>
                               <h3 className="text-sm font-semibold tracking-wide uppercase mb-1">{item.name}</h3>
-                              <p className="text-sm text-gray-500">${item.price}</p>
+                              <p className="text-sm text-gray-500">{formatPrice(item.price)}</p>
                            </div>
                            <button onClick={() => removeFromCart(item.cartItemId)} className="text-gray-400 hover:text-black transition-colors p-1 -mt-1 -mr-1">
                              <X size={20} strokeWidth={1} />
@@ -65,7 +66,7 @@ function Cart() {
                              </button>
                            </div>
                            <div className="text-sm font-semibold">
-                             ${item.price * item.quantity}
+                             {formatPrice(item.price * item.quantity)}
                            </div>
                         </div>
                      </div>
@@ -79,7 +80,7 @@ function Cart() {
                       </div>
                       <div className="flex flex-col justify-center">
                         <h3 className="text-sm font-semibold tracking-wide uppercase mb-1">{item.name}</h3>
-                        <p className="text-sm text-gray-500">${item.price}</p>
+                        <p className="text-sm text-gray-500">{formatPrice(item.price)}</p>
                       </div>
                     </div>
 
@@ -96,7 +97,7 @@ function Cart() {
                     </div>
 
                     <div className="col-span-2 text-right text-sm font-semibold">
-                      ${item.price * item.quantity}
+                      {formatPrice(item.price * item.quantity)}
                     </div>
 
                     <div className="col-span-2 flex justify-end">
@@ -118,7 +119,7 @@ function Cart() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
-                  <span>${cartTotal}</span>
+                  <span>{formatPrice(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Shipping</span>
@@ -128,7 +129,7 @@ function Cart() {
 
               <div className="flex justify-between text-base font-semibold border-t border-gray-200 pt-6 mb-8">
                 <span>Total</span>
-                <span>${cartTotal}</span>
+                <span>{formatPrice(cartTotal)}</span>
               </div>
 
               <Link to="/checkout" className="block text-center w-full bg-black text-white py-4 text-sm font-semibold tracking-widest uppercase hover:bg-gray-900 transition-colors">

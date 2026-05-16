@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { formatPrice } from '../utils/formatPrice';
 
 function ProductCard({ product }) {
   return (
@@ -16,7 +17,7 @@ function ProductCard({ product }) {
         </div>
       </div>
       <h3 className="text-sm font-semibold tracking-wide uppercase mb-1 text-black">{product.name}</h3>
-      <p className="text-gray-500 font-light">${product.price}</p>
+      <p className="text-gray-500 font-light">{formatPrice(product.price)}</p>
     </Link>
   );
 }

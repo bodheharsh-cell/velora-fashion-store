@@ -2,7 +2,7 @@ export const products = [
   { 
     id: 1, 
     name: 'Minimalist Black Dress', 
-    price: 245, 
+    price: 2499, 
     category: 'Women', 
     image: '/prod_1_1778924866615.png',
     description: 'A timeless silhouette crafted from lightweight crepe. This minimalist black dress features a tailored fit, subtle darting, and a fluid drape that moves elegantly with you.',
@@ -14,7 +14,7 @@ export const products = [
   { 
     id: 2, 
     name: 'Crisp White Shirt', 
-    price: 120, 
+    price: 1999, 
     category: 'Men', 
     image: '/prod_2_1778924880423.png',
     description: 'The foundation of any wardrobe. Our crisp white shirt is cut from premium organic cotton poplin for breathability and structure, featuring a concealed button placket for an ultra-clean look.',
@@ -26,7 +26,7 @@ export const products = [
   { 
     id: 3, 
     name: 'Leather Handbag', 
-    price: 495, 
+    price: 4999, 
     category: 'Accessories', 
     image: '/prod_3_1778924918345.png',
     description: 'Expertly crafted in Italy from smooth full-grain leather, this handbag boasts a structured minimalist design with subtle hardware. Generously sized to carry your daily essentials in style.',
@@ -38,7 +38,7 @@ export const products = [
   { 
     id: 4, 
     name: 'Sleek Sneakers', 
-    price: 210, 
+    price: 2999, 
     category: 'Men', 
     image: '/prod_4_1778924935977.png',
     description: 'Elevate your everyday uniform with our sleek leather sneakers. Designed with a stripped-back profile and resting on a comfortable tonal rubber sole for all-day wear.',
@@ -50,7 +50,7 @@ export const products = [
   { 
     id: 5, 
     name: 'Oversized Wool Coat', 
-    price: 650, 
+    price: 6499, 
     category: 'Women', 
     image: '/prod_1_1778924866615.png', 
     description: 'Envelop yourself in luxury with this oversized wool coat. Featuring drop shoulders and a tie belt, it offers a relaxed yet deeply sophisticated layering option for colder months.',
@@ -62,7 +62,7 @@ export const products = [
   { 
     id: 6, 
     name: 'Silk Evening Blouse', 
-    price: 180, 
+    price: 1499, 
     category: 'Women', 
     image: '/prod_2_1778924880423.png', 
     description: 'An ethereal silk blouse designed with a delicate mock neck and draped back. Perfect for evening events where understated luxury is required.',

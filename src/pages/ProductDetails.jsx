@@ -4,6 +4,7 @@ import { Minus, Plus, Heart, Star, ChevronDown } from 'lucide-react';
 import { getProductById, products } from '../data/products';
 import ProductCard from '../components/ProductCard';
 import { useShop } from '../context/ShopContext';
+import { formatPrice } from '../utils/formatPrice';
 
 function ProductDetails() {
   const { id } = useParams();
@@ -53,7 +54,7 @@ function ProductDetails() {
           {/* Product Info */}
           <div className="flex flex-col">
             <h1 className="text-3xl font-light tracking-tight uppercase mb-4">{product.name}</h1>
-            <p className="text-xl text-gray-900 mb-6">${product.price}</p>
+            <p className="text-xl text-gray-900 mb-6">{formatPrice(product.price)}</p>
             
             <div className="flex items-center mb-8">
               <div className="flex text-black">

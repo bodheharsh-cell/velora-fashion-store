@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CreditCard, Wallet, Truck } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { formatPrice } from '../utils/formatPrice';
 
 function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const { cartItems, cartTotal } = useShop();
 
   const subtotal = cartTotal;
-  const shipping = 15;
+  const shipping = 150;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
@@ -167,7 +168,7 @@ function Checkout() {
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                     </div>
                     <div className="text-xs font-semibold flex items-center">
-                      ${item.price * item.quantity}
+                      {formatPrice(item.price * item.quantity)}
                     </div>
                   </div>
                 ))}
@@ -189,21 +190,21 @@ function Checkout() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Shipping</span>
-                  <span>${shipping.toFixed(2)}</span>
+                  <span>{formatPrice(shipping)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Estimated Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{formatPrice(tax)}</span>
                 </div>
               </div>
 
               <div className="flex justify-between text-lg font-semibold border-t border-gray-200 pt-6 mb-8">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
 
               <button type="submit" className="w-full bg-black text-white py-4 text-sm font-semibold tracking-widest uppercase hover:bg-gray-900 transition-colors shadow-md hover:shadow-lg">

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { formatPrice } from '../utils/formatPrice';
 
 function Wishlist() {
   const { wishlistItems, removeFromWishlist, moveToCart } = useShop();
@@ -45,7 +46,7 @@ function Wishlist() {
               </button>
 
               <h3 className="text-sm font-semibold tracking-wide uppercase mb-1">{product.name}</h3>
-              <p className="text-gray-500 font-light mb-4">${product.price}</p>
+              <p className="text-gray-500 font-light mb-4">{formatPrice(product.price)}</p>
               
               <button 
                 onClick={() => moveToCart(product)}
