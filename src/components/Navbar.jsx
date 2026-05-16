@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, Heart, X } from 'lucide-react';
 import SearchModal from './SearchModal';
 import { useShop } from '../context/ShopContext';
+import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartItemCount, wishlistItemCount } = useShop();
+  const { user } = useAuth();
 
   return (
     <>
@@ -52,7 +54,7 @@ function Navbar() {
               <button onClick={() => setIsSearchOpen(true)} className="text-gray-900 hover:text-gray-500 transition-colors">
                 <Search size={20} strokeWidth={1.5} />
               </button>
-              <Link to="/login" className="text-gray-900 hover:text-gray-500 transition-colors">
+              <Link to={user ? "/profile" : "/login"} className="text-gray-900 hover:text-gray-500 transition-colors">
                 <User size={20} strokeWidth={1.5} />
               </Link>
               <Link to="/wishlist" className="text-gray-900 hover:text-gray-500 transition-colors relative">
@@ -111,8 +113,8 @@ function Navbar() {
               <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-light tracking-wide uppercase hover:text-gray-500 transition-colors">About</Link>
               
               <div className="pt-8 mt-auto border-t border-gray-100 flex flex-col space-y-6">
-                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors">
-                  <User size={18} className="mr-4" /> Account
+                <Link to={user ? "/profile" : "/login"} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors">
+                  <User size={18} className="mr-4" /> {user ? "Profile" : "Account"}
                 </Link>
                 <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors">
                   <Heart size={18} className="mr-4" /> Wishlist ({wishlistItemCount})

@@ -1,41 +1,78 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Heart, Star, ChevronDown } from 'lucide-react';
-import { getProductById, products } from '../data/products';
 import ProductCard from '../components/ProductCard';
 import { useShop } from '../context/ShopContext';
 import { formatPrice } from '../utils/formatPrice';
+import { getProductById, getProducts } from '../lib/productService';
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isInWishlist } = useShop();
+  
   const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState('details');
 
   useEffect(() => {
-    const p = getProductById(id);
-    setProduct(p);
-    if (p) {
-      setSelectedSize(p.sizes[0] || '');
-      setSelectedColor(p.colors[0] || '');
-      setQuantity(1);
-      window.scrollTo(0, 0);
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [p, allProducts] = await Promise.all([
+          getProductById(id),
+          getProducts()
+        ]);
+        
+        setProduct(p);
+        
+        if (p) {
+          setSelectedSize(p.sizes?.[0] || '');
+          setSelectedColor(p.colors?.[0] || '');
+          setQuantity(1);
+          window.scrollTo(0, 0);
+          
+          const related = allProducts.filter(item => item.id !== p.id).slice(0, 4);
+          setRelatedProducts(related);
+        } else {
+          setError('Product not found.');
+        }
+      } catch (err) {
+        setError('Failed to load product details.');
+      } finally {
+        setLoading(false);
+      }
     }
+    
+    fetchData();
   }, [id]);
 
-  if (!product) {
+  if (loading) {
     return (
       <div className="pt-32 min-h-screen flex items-center justify-center">
-        <h1 className="text-2xl font-light">Product not found.</h1>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
       </div>
     );
   }
 
-  const relatedProducts = products.filter(p => p.id !== product.id).slice(0, 4);
+  if (error || !product) {
+    return (
+      <div className="pt-32 min-h-screen flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-light mb-4">{error || 'Product not found.'}</h1>
+        <Link to="/shop" className="text-sm font-semibold tracking-widest uppercase hover:underline">
+          Back to Shop
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-20 min-h-screen bg-white">
@@ -62,7 +99,7 @@ function ProductDetails() {
                   <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
                 ))}
               </div>
-              <span className="ml-2 text-sm text-gray-500 underline underline-offset-4 cursor-pointer">{product.reviews} Reviews</span>
+              <span className="ml-2 text-sm text-gray-500 underline underline-offset-4 cursor-pointer">{product.reviews || 0} Reviews</span>
             </div>
 
             <p className="text-gray-600 font-light leading-relaxed mb-10">
@@ -70,42 +107,46 @@ function ProductDetails() {
             </p>
 
             {/* Colors */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-sm font-semibold tracking-widest uppercase">Color</span>
-                <span className="text-sm text-gray-500">{selectedColor}</span>
+            {product.colors && product.colors.length > 0 && (
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm font-semibold tracking-widest uppercase">Color</span>
+                  <span className="text-sm text-gray-500">{selectedColor}</span>
+                </div>
+                <div className="flex space-x-3">
+                  {product.colors.map(color => (
+                    <button 
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-6 py-2 text-sm tracking-wide border transition-colors ${selectedColor === color ? 'border-black bg-black text-white' : 'border-gray-200 text-gray-600 hover:border-black'}`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex space-x-3">
-                {product.colors.map(color => (
-                  <button 
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`px-6 py-2 text-sm tracking-wide border transition-colors ${selectedColor === color ? 'border-black bg-black text-white' : 'border-gray-200 text-gray-600 hover:border-black'}`}
-                  >
-                    {color}
-                  </button>
-                ))}
-              </div>
-            </div>
+            )}
 
             {/* Sizes */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-sm font-semibold tracking-widest uppercase">Size</span>
-                <Link to="#" className="text-sm text-gray-500 underline underline-offset-4">Size Guide</Link>
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm font-semibold tracking-widest uppercase">Size</span>
+                  <Link to="#" className="text-sm text-gray-500 underline underline-offset-4">Size Guide</Link>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {product.sizes.map(size => (
+                    <button 
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`w-14 h-14 flex items-center justify-center text-sm tracking-wide border transition-colors ${selectedSize === size ? 'border-black bg-black text-white' : 'border-gray-200 text-gray-600 hover:border-black'}`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-3">
-                {product.sizes.map(size => (
-                  <button 
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`w-14 h-14 flex items-center justify-center text-sm tracking-wide border transition-colors ${selectedSize === size ? 'border-black bg-black text-white' : 'border-gray-200 text-gray-600 hover:border-black'}`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div className="mb-12">
@@ -146,22 +187,24 @@ function ProductDetails() {
             {/* Accordions */}
             <div className="border-t border-gray-200 divide-y divide-gray-200">
               {/* Details Accordion */}
-              <div className="py-6">
-                <button 
-                  onClick={() => setActiveAccordion(activeAccordion === 'details' ? '' : 'details')}
-                  className="w-full flex justify-between items-center text-left"
-                >
-                  <span className="text-sm font-semibold tracking-widest uppercase">Product Details</span>
-                  <ChevronDown size={20} className={`transform transition-transform ${activeAccordion === 'details' ? 'rotate-180' : ''}`} />
-                </button>
-                {activeAccordion === 'details' && (
-                  <ul className="mt-6 space-y-2 text-gray-600 font-light list-disc pl-5">
-                    {product.details.map((detail, i) => (
-                      <li key={i}>{detail}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              {product.details && product.details.length > 0 && (
+                <div className="py-6">
+                  <button 
+                    onClick={() => setActiveAccordion(activeAccordion === 'details' ? '' : 'details')}
+                    className="w-full flex justify-between items-center text-left"
+                  >
+                    <span className="text-sm font-semibold tracking-widest uppercase">Product Details</span>
+                    <ChevronDown size={20} className={`transform transition-transform ${activeAccordion === 'details' ? 'rotate-180' : ''}`} />
+                  </button>
+                  {activeAccordion === 'details' && (
+                    <ul className="mt-6 space-y-2 text-gray-600 font-light list-disc pl-5">
+                      {product.details.map((detail, i) => (
+                        <li key={i}>{detail}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
 
               {/* Shipping Accordion */}
               <div className="py-6">
@@ -185,14 +228,16 @@ function ProductDetails() {
         </div>
 
         {/* Related Products */}
-        <div className="border-t border-gray-200 pt-24 mt-24">
-          <h2 className="text-2xl font-light tracking-tight uppercase mb-12 text-center">You May Also Like</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
-            {relatedProducts.map(rp => (
-              <ProductCard key={rp.id} product={rp} />
-            ))}
+        {relatedProducts.length > 0 && (
+          <div className="border-t border-gray-200 pt-24 mt-24">
+            <h2 className="text-2xl font-light tracking-tight uppercase mb-12 text-center">You May Also Like</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
+              {relatedProducts.map(rp => (
+                <ProductCard key={rp.id} product={rp} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>

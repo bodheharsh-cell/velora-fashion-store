@@ -1,13 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 
-import { products } from '../data/products';
+import { getProducts } from '../lib/productService';
 
 const categories = ['All', 'Women', 'Men', 'Accessories'];
 
 function Shop() {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        const data = await getProducts();
+        setProducts(data);
+      } catch (err) {
+        setError('Failed to load products.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchProducts();
+  }, []);
 
   return (
     <div className="pt-20 min-h-screen bg-white">
@@ -70,18 +89,30 @@ function Shop() {
               <span className="text-sm text-gray-500">{products.length} Products</span>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex justify-center items-center py-32">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+              </div>
+            ) : error ? (
+              <div className="text-center text-red-500 py-32">{error}</div>
+            ) : products.length === 0 ? (
+              <div className="text-center text-gray-500 py-32">No products found.</div>
+            ) : (
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
 
             {/* Pagination / Load More */}
-            <div className="mt-20 flex justify-center border-t border-gray-100 pt-16">
-              <button className="border border-black px-12 py-4 text-sm font-semibold tracking-widest uppercase hover:bg-black hover:text-white transition-colors">
-                Load More
-              </button>
-            </div>
+            {!loading && products.length > 0 && (
+              <div className="mt-20 flex justify-center border-t border-gray-100 pt-16">
+                <button className="border border-black px-12 py-4 text-sm font-semibold tracking-widest uppercase hover:bg-black hover:text-white transition-colors">
+                  Load More
+                </button>
+              </div>
+            )}
           </main>
         </div>
       </div>

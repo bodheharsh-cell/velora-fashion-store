@@ -7,18 +7,24 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import Collections from './pages/Collections';
 import About from './pages/About';
 import Checkout from './pages/Checkout';
 import Wishlist from './pages/Wishlist';
 import { ShopProvider } from './context/ShopContext';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminLayout from './layouts/AdminLayout';
+
 
 function App() {
   return (
-    <ShopProvider>
-      <Router>
-        <Toaster 
+    <AuthProvider>
+      <ShopProvider>
+        <Router>
+          <Toaster 
           position="bottom-center"
           toastOptions={{
             duration: 3000,
@@ -45,12 +51,24 @@ function App() {
             <Route path="checkout" element={<Checkout />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="login" element={<Login />} />
-            <Route path="profile" element={<UserProfile />} />
-            <Route path="admin" element={<AdminDashboard />} />
+            
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="profile" element={<UserProfile />} />
+            </Route>
+          </Route>
+          
+          {/* Admin Routes */}
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminDashboard />} />
+            </Route>
           </Route>
         </Routes>
       </Router>
     </ShopProvider>
+    </AuthProvider>
   );
 }
 

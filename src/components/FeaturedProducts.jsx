@@ -1,32 +1,84 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ProductCard from './ProductCard';
+import { getFeaturedProducts } from '../lib/productService';
 
-import { products } from '../data/products';
+const FeaturedProducts = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const featuredProducts = products.slice(0, 4);
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const data = await getFeaturedProducts(4);
+        console.log('FEATURED:', data);
+        setProducts(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-function FeaturedProducts() {
+    loadProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="py-20 text-center">
+        Loading...
+      </div>
+    );
+  }
+
   return (
-    <section className="py-16 md:py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-end mb-8 md:mb-12">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tighter uppercase mb-2">Featured Products</h2>
-            <p className="text-gray-500 font-light">Curated pieces for the season</p>
-          </div>
-          <Link to="/shop" className="hidden sm:block text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors border-b border-black pb-1">
-            View All
+    <section className="px-6 md:px-16 py-20">
+      <div className="flex items-center justify-between mb-12">
+        <div>
+          <h2 className="text-4xl font-light uppercase">
+            Featured Products
+          </h2>
+          <p className="text-gray-500 mt-2">
+            Curated pieces for the season
+          </p>
+        </div>
+
+        <Link
+          to="/shop"
+          className="uppercase border-b border-black pb-1 text-sm tracking-widest"
+        >
+          View All
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        {products.map((product) => (
+          <Link
+            key={product.id}
+            to={`/product/${product.id}`}
+            className="group"
+          >
+            <div className="aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+            </div>
+
+            <div className="mt-4">
+              <h3 className="uppercase text-sm tracking-wide">
+                {product.name}
+              </h3>
+
+              <p className="mt-1 text-gray-500">
+                ₹{product.price}
+              </p>
+            </div>
           </Link>
-        </div>
-        
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        ))}
       </div>
     </section>
   );
-}
+};
 
 export default FeaturedProducts;
