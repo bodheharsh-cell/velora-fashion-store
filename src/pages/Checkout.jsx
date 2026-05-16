@@ -1,22 +1,80 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CreditCard, Wallet, Truck } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useAuth } from '../context/AuthContext';
+import { createOrder } from '../lib/orderService';
 import { formatPrice } from '../utils/formatPrice';
+import toast from 'react-hot-toast';
 
 function Checkout() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { cartItems, cartTotal, clearCart } = useShop();
+
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
-  const { cartItems, cartTotal } = useShop();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: user?.email || '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: '',
+    instructions: ''
+  });
 
   const subtotal = cartTotal;
-  const shipping = 150;
+  const shipping = subtotal > 0 ? 150 : 0;
   const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const total = subtotal > 0 ? subtotal + shipping + tax : 0;
 
-  const handleCheckoutSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
-    // In the future, initiate Razorpay or other payment gateways here based on `paymentMethod`
-    console.log('Initiating checkout with method:', paymentMethod);
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const orderData = {
+      user_id: user?.id || null, // Allow guest checkout
+      customer_name: formData.fullName,
+      customer_email: formData.email,
+      items: cartItems,
+      total: total,
+      status: 'Pending',
+      payment_method: paymentMethod,
+      shipping_address: {
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        postalCode: formData.postalCode,
+        country: formData.country,
+        instructions: formData.instructions
+      }
+    };
+
+    const { error } = await createOrder(orderData);
+
+    setIsSubmitting(false);
+
+    if (error) {
+      toast.error(error.message || 'Failed to place order. Please try again.');
+    } else {
+      toast.success('Order placed successfully!');
+      clearCart();
+      navigate('/order-confirmation');
+    }
   };
 
   return (
@@ -34,39 +92,48 @@ function Checkout() {
               <h2 className="text-sm font-semibold tracking-widest uppercase mb-8 pb-4 border-b border-gray-200">Shipping Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
                 <div className="sm:col-span-2">
-                  <input type="text" placeholder="Full Name" required
+                  <input type="text" name="fullName" placeholder="Full Name" required
+                    value={formData.fullName} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-1">
-                  <input type="email" placeholder="Email Address" required
+                  <input type="email" name="email" placeholder="Email Address" required
+                    value={formData.email} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-1">
-                  <input type="tel" placeholder="Phone Number" required
+                  <input type="tel" name="phone" placeholder="Phone Number" required
+                    value={formData.phone} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-2">
-                  <input type="text" placeholder="Address Line" required
+                  <input type="text" name="address" placeholder="Address Line" required
+                    value={formData.address} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-1">
-                  <input type="text" placeholder="City" required
+                  <input type="text" name="city" placeholder="City" required
+                    value={formData.city} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-1">
-                  <input type="text" placeholder="State / Province" required
+                  <input type="text" name="state" placeholder="State / Province" required
+                    value={formData.state} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-1">
-                  <input type="text" placeholder="Postal Code" required
+                  <input type="text" name="postalCode" placeholder="Postal Code" required
+                    value={formData.postalCode} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-1">
-                  <input type="text" placeholder="Country" required
+                  <input type="text" name="country" placeholder="Country" required
+                    value={formData.country} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="sm:col-span-2 mt-4">
-                  <textarea placeholder="Delivery Instructions (Optional)" rows="3"
+                  <textarea name="instructions" placeholder="Delivery Instructions (Optional)" rows="3"
+                    value={formData.instructions} onChange={handleInputChange}
                     className="w-full bg-transparent border-b border-gray-300 pb-3 text-sm placeholder-gray-400 outline-none focus:border-black transition-colors resize-none"></textarea>
                 </div>
               </div>
@@ -207,8 +274,8 @@ function Checkout() {
                 <span>{formatPrice(total)}</span>
               </div>
 
-              <button type="submit" className="w-full bg-black text-white py-4 text-sm font-semibold tracking-widest uppercase hover:bg-gray-900 transition-colors shadow-md hover:shadow-lg">
-                Continue to Payment
+              <button type="submit" disabled={isSubmitting || cartItems.length === 0} className="w-full bg-black text-white py-4 text-sm font-semibold tracking-widest uppercase hover:bg-gray-900 transition-colors shadow-md hover:shadow-lg disabled:opacity-50">
+                {isSubmitting ? 'Processing...' : 'Place Order'}
               </button>
             </div>
           </div>
