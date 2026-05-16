@@ -26,7 +26,7 @@ function Wishlist() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="text-3xl font-light tracking-tight uppercase mb-12">Wishlist</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
           {wishlistItems.map((product) => (
             <div key={product.id} className="group relative">
               <Link to={`/product/${product.id}`} className="block relative aspect-[3/4] bg-white overflow-hidden mb-4">

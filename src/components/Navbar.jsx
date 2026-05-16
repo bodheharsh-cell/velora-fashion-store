@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, Heart, X } from 'lucide-react';
 import SearchModal from './SearchModal';
 import { useShop } from '../context/ShopContext';
 
 function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartItemCount, wishlistItemCount } = useShop();
 
   return (
@@ -16,7 +17,7 @@ function Navbar() {
             
             {/* Mobile menu button */}
             <div className="flex items-center lg:hidden">
-              <button className="text-gray-900 hover:text-gray-600 transition-colors">
+              <button onClick={() => setIsMobileMenuOpen(true)} className="text-gray-900 hover:text-gray-600 transition-colors">
                 <Menu size={24} strokeWidth={1.5} />
               </button>
             </div>
@@ -62,6 +63,48 @@ function Navbar() {
         </div>
       </nav>
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[100] lg:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          
+          {/* Slide-in Menu */}
+          <div className="absolute top-0 left-0 w-[85%] max-w-sm h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
+            <div className="p-8 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-12 border-b border-gray-100 pb-6">
+                <span className="text-xl font-bold tracking-tighter uppercase">ÉLÉGANCE</span>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400 hover:text-black transition-colors">
+                  <X size={24} strokeWidth={1} />
+                </button>
+              </div>
+
+              <div className="flex flex-col space-y-6 flex-1">
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-light tracking-wide uppercase hover:text-gray-500 transition-colors">Home</Link>
+                <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-light tracking-wide uppercase hover:text-gray-500 transition-colors">Shop</Link>
+                <Link to="/collections" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-light tracking-wide uppercase hover:text-gray-500 transition-colors">Collections</Link>
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-light tracking-wide uppercase hover:text-gray-500 transition-colors">About</Link>
+                
+                <div className="pt-8 mt-auto border-t border-gray-100 flex flex-col space-y-6">
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors">
+                    <User size={18} className="mr-4" /> Account
+                  </Link>
+                  <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors">
+                    <Heart size={18} className="mr-4" /> Wishlist ({wishlistItemCount})
+                  </Link>
+                  <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center text-sm font-semibold tracking-widest uppercase hover:text-gray-500 transition-colors">
+                    <ShoppingCart size={18} className="mr-4" /> Cart ({cartItemCount})
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

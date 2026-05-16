@@ -41,7 +41,7 @@ function ProductDetails() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         
         {/* Main Product Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 mb-16 md:mb-24">
           
           {/* Image Gallery */}
           <div className="flex flex-col space-y-4">
@@ -186,7 +186,7 @@ function ProductDetails() {
         {/* Related Products */}
         <div className="border-t border-gray-200 pt-24 mt-24">
           <h2 className="text-2xl font-light tracking-tight uppercase mb-12 text-center">You May Also Like</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
             {relatedProducts.map(rp => (
               <ProductCard key={rp.id} product={rp} />
             ))}
