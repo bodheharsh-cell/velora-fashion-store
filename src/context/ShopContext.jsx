@@ -13,23 +13,47 @@ export const ShopProvider = ({ children }) => {
 
   // --- Cart Actions ---
   const addToCart = (product, quantity = 1, size = '', color = '') => {
+    // Enforce out-of-stock guard
+    if (!product.stock || product.stock <= 0) {
+      toast.error('This product is out of stock.');
+      return;
+    }
+
     setCartItems(prev => {
-      // Check if product with same id, size, and color exists
-      const existingItemIndex = prev.findIndex(item => 
+      const existingItemIndex = prev.findIndex(item =>
         item.id === product.id && item.selectedSize === size && item.selectedColor === color
       );
 
-      toast.success('Added to bag');
-
       if (existingItemIndex >= 0) {
+        const existingQty = prev[existingItemIndex].quantity;
+        const maxStock = product.stock ?? Infinity;
+        const newQty = existingQty + quantity;
+
+        if (newQty > maxStock) {
+          toast.error(`Only ${maxStock} units available for this item.`);
+          // Clamp to max available
+          const newItems = [...prev];
+          newItems[existingItemIndex] = { ...newItems[existingItemIndex], quantity: maxStock };
+          return newItems;
+        }
+
+        toast.success('Added to bag');
         const newItems = [...prev];
-        newItems[existingItemIndex].quantity += quantity;
+        newItems[existingItemIndex] = { ...newItems[existingItemIndex], quantity: newQty };
         return newItems;
       }
 
-      // Add a unique key combining id, size, color for easy mapping
+      // New item — cap quantity at stock
+      const maxStock = product.stock ?? Infinity;
+      const clampedQty = Math.min(quantity, maxStock);
+      if (clampedQty < quantity) {
+        toast.error(`Only ${maxStock} units available. Added ${clampedQty} to your bag.`);
+      } else {
+        toast.success('Added to bag');
+      }
+
       const cartItemId = `${product.id}-${size}-${color}`;
-      return [...prev, { ...product, cartItemId, quantity, selectedSize: size, selectedColor: color }];
+      return [...prev, { ...product, cartItemId, quantity: clampedQty, selectedSize: size, selectedColor: color }];
     });
   };
 
@@ -38,13 +62,25 @@ export const ShopProvider = ({ children }) => {
     toast.success('Removed from bag');
   };
 
+  /**
+   * updateQuantity — delta-based (+1 / -1).
+   * Clamps to [1, item.stock] to prevent invalid quantities.
+   */
   const updateQuantity = (cartItemId, delta) => {
     setCartItems(prev => prev.map(item => {
-      if (item.cartItemId === cartItemId) {
-        const newQty = item.quantity + delta;
-        return { ...item, quantity: newQty > 0 ? newQty : 1 };
+      if (item.cartItemId !== cartItemId) return item;
+
+      const maxStock = item.stock ?? Infinity;
+      const newQty = item.quantity + delta;
+
+      if (newQty < 1) return { ...item, quantity: 1 };
+
+      if (newQty > maxStock) {
+        toast.error(`Only ${maxStock} units available for this item.`);
+        return { ...item, quantity: maxStock };
       }
-      return item;
+
+      return { ...item, quantity: newQty };
     }));
   };
 
@@ -69,7 +105,6 @@ export const ShopProvider = ({ children }) => {
   };
 
   const moveToCart = (product) => {
-    // Default to first size/color if not specified
     const size = product.sizes?.[0] || '';
     const color = product.colors?.[0] || '';
     addToCart(product, 1, size, color);

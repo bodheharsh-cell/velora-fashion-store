@@ -39,7 +39,7 @@ function AdminCustomers() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h1 className="text-2xl font-light tracking-tight uppercase">Customers</h1>
+        <h1 className="text-lg sm:text-2xl font-light tracking-tight uppercase">Customers</h1>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-sm overflow-hidden shadow-sm">
@@ -65,10 +65,10 @@ function AdminCustomers() {
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold tracking-widest uppercase text-gray-500">
               <tr>
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Contact</th>
-                <th className="px-6 py-4">Joined Date</th>
-                <th className="px-6 py-4 text-right">Status</th>
+                <th className="px-3 sm:px-6 py-4">Customer</th>
+                <th className="px-3 sm:px-6 py-4">Contact</th>
+                <th className="px-3 sm:px-6 py-4">Joined Date</th>
+                <th className="px-3 sm:px-6 py-4 text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -87,28 +87,28 @@ function AdminCustomers() {
               ) : (
                 filteredCustomers.map((customer) => (
                   <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-medium">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 flex items-center gap-3">
+                      <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-medium flex-shrink-0">
                         {(customer.full_name || customer.email || '?').charAt(0).toUpperCase()}
                       </div>
-                      <div>
-                        <div className="font-medium text-gray-900">{customer.full_name || 'No Name Provided'}</div>
-                        <div className="text-xs text-gray-400 font-mono">{customer.id.split('-')[0]}...</div>
+                      <div className="min-w-0">
+                        <div className="font-medium text-gray-900 truncate">{customer.full_name || 'No Name Provided'}</div>
+                        <div className="text-xs text-gray-400 font-mono truncate">{customer.id.split('-')[0]}...</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <div className="flex items-center text-gray-600 gap-2">
-                        <Mail size={14} className="text-gray-400" />
-                        {customer.email}
+                        <Mail size={14} className="text-gray-400 flex-shrink-0" />
+                        <span className="truncate">{customer.email}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <div className="flex items-center text-gray-600 gap-2">
-                        <Calendar size={14} className="text-gray-400" />
+                        <Calendar size={14} className="text-gray-400 flex-shrink-0" />
                         {new Date(customer.created_at).toLocaleDateString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                         Active
                       </span>

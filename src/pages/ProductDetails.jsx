@@ -149,38 +149,73 @@ function ProductDetails() {
             )}
 
             {/* Quantity */}
-            <div className="mb-12">
-              <span className="block text-sm font-semibold tracking-widest uppercase mb-4">Quantity</span>
-              <div className="flex items-center border border-gray-300 w-32 h-14">
-                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="flex-1 flex justify-center text-gray-500 hover:text-black">
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-semibold tracking-widest uppercase">Quantity</span>
+                {product.stock > 0 && product.stock <= 10 && (
+                  <span className="text-xs font-medium text-orange-600 tracking-wide">
+                    Only {product.stock} left
+                  </span>
+                )}
+              </div>
+              <div className={`flex items-center border w-32 h-14 ${
+                product.stock <= 0 ? 'border-gray-200 opacity-40 pointer-events-none' : 'border-gray-300'
+              }`}>
+                <button
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  disabled={product.stock <= 0}
+                  className="flex-1 flex justify-center text-gray-500 hover:text-black disabled:cursor-not-allowed"
+                >
                   <Minus size={16} />
                 </button>
                 <span className="text-base font-medium w-10 text-center">{quantity}</span>
-                <button onClick={() => setQuantity(q => q + 1)} className="flex-1 flex justify-center text-gray-500 hover:text-black">
+                <button
+                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                  disabled={product.stock <= 0 || quantity >= product.stock}
+                  className="flex-1 flex justify-center text-gray-500 hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
+                >
                   <Plus size={16} />
                 </button>
               </div>
             </div>
 
+            {/* Out-of-Stock Badge */}
+            {product.stock <= 0 && (
+              <div className="mb-6 inline-flex items-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-sm">
+                <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                <span className="text-sm font-semibold tracking-widest uppercase text-gray-700">Out of Stock</span>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
-              <button 
+              <button
                 onClick={() => addToCart(product, quantity, selectedSize, selectedColor)}
-                className="flex-1 bg-black text-white py-4 text-sm font-semibold tracking-widest uppercase hover:bg-gray-900 transition-colors"
+                disabled={product.stock <= 0}
+                className={`flex-1 py-4 text-sm font-semibold tracking-widest uppercase transition-colors ${
+                  product.stock <= 0
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-black text-white hover:bg-gray-900'
+                }`}
               >
-                Add to Cart
+                {product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
               </button>
-              <button 
+              <button
                 onClick={() => { addToCart(product, quantity, selectedSize, selectedColor); navigate('/checkout'); }}
-                className="flex-1 bg-white text-black border border-black py-4 text-sm font-semibold tracking-widest uppercase hover:bg-gray-50 transition-colors"
+                disabled={product.stock <= 0}
+                className={`flex-1 border py-4 text-sm font-semibold tracking-widest uppercase transition-colors ${
+                  product.stock <= 0
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50'
+                    : 'bg-white text-black border-black hover:bg-gray-50'
+                }`}
               >
                 Buy Now
               </button>
-              <button 
+              <button
                 onClick={() => toggleWishlist(product)}
                 className="flex items-center justify-center border border-gray-200 w-14 hover:border-black transition-colors text-gray-500 hover:text-black"
               >
-                <Heart size={20} strokeWidth={1.5} fill={isInWishlist(product.id) ? "black" : "none"} color={isInWishlist(product.id) ? "black" : "currentColor"} />
+                <Heart size={20} strokeWidth={1.5} fill={isInWishlist(product.id) ? 'black' : 'none'} color={isInWishlist(product.id) ? 'black' : 'currentColor'} />
               </button>
             </div>
 

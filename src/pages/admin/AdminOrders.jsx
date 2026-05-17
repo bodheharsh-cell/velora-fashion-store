@@ -62,7 +62,7 @@ function AdminOrders() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h1 className="text-2xl font-light tracking-tight uppercase">Orders</h1>
+        <h1 className="text-lg sm:text-2xl font-light tracking-tight uppercase">Orders</h1>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-sm overflow-hidden shadow-sm">
@@ -88,12 +88,12 @@ function AdminOrders() {
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold tracking-widest uppercase text-gray-500">
               <tr>
-                <th className="px-6 py-4">Order ID</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Total</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4"></th>
+                <th className="px-3 sm:px-6 py-4">Order ID</th>
+                <th className="px-3 sm:px-6 py-4">Date</th>
+                <th className="px-3 sm:px-6 py-4">Customer</th>
+                <th className="px-3 sm:px-6 py-4">Total</th>
+                <th className="px-3 sm:px-6 py-4">Status</th>
+                <th className="px-3 sm:px-6 py-4"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -113,20 +113,20 @@ function AdminOrders() {
                 filteredOrders.map((order) => (
                   <React.Fragment key={order.id}>
                     <tr className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 font-mono text-xs text-gray-500">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs text-gray-500">
                         {order.id.split('-')[0]}...
                       </td>
-                      <td className="px-6 py-4 text-gray-500">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-500">
                         {new Date(order.created_at).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         <div className="font-medium text-gray-900">{order.customer_name}</div>
                         <div className="text-xs text-gray-400">{order.customer_email}</div>
                       </td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900">
                         {formatPrice(order.total)}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         <select
                           value={order.status}
                           onChange={(e) => handleStatusChange(order.id, e.target.value)}
@@ -143,7 +143,7 @@ function AdminOrders() {
                           ))}
                         </select>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                         <button
                           onClick={() => toggleExpand(order.id)}
                           className="text-gray-400 hover:text-black transition-colors flex items-center justify-end w-full"
@@ -154,8 +154,8 @@ function AdminOrders() {
                     </tr>
                     {expandedOrderId === order.id && (
                       <tr className="bg-gray-50 border-b border-gray-200">
-                        <td colSpan="6" className="px-6 py-6">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <td colSpan="6" className="px-3 sm:px-6 py-4 sm:py-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                             <div>
                               <h4 className="text-xs font-semibold tracking-widest uppercase mb-4 text-gray-900">Order Items</h4>
                               <div className="space-y-4">

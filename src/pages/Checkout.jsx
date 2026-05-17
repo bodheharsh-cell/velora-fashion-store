@@ -4,6 +4,7 @@ import { CreditCard, Wallet, Truck } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../lib/orderService';
+import { validateCartStock, decrementStockForOrder } from '../lib/productService';
 import { formatPrice } from '../utils/formatPrice';
 import toast from 'react-hot-toast';
 
@@ -45,8 +46,17 @@ function Checkout() {
 
     setIsSubmitting(true);
 
+    // ── Stock validation (live DB check) ─────────────────────────────────────
+    const { valid, blockedItems } = await validateCartStock(cartItems);
+    if (!valid) {
+      const names = blockedItems.map(i => i.name).join(', ');
+      toast.error(`Insufficient stock for: ${names}. Please update your cart.`);
+      setIsSubmitting(false);
+      return;
+    }
+
     const orderData = {
-      user_id: user?.id || null, // Allow guest checkout
+      user_id: user?.id || null,
       customer_name: formData.fullName,
       customer_email: formData.email,
       items: cartItems,
@@ -64,17 +74,22 @@ function Checkout() {
       }
     };
 
-    const { error } = await createOrder(orderData);
-
-    setIsSubmitting(false);
+    const { data: orderResult, error } = await createOrder(orderData);
 
     if (error) {
       toast.error(error.message || 'Failed to place order. Please try again.');
-    } else {
-      toast.success('Order placed successfully!');
-      clearCart();
-      navigate('/order-confirmation');
+      setIsSubmitting(false);
+      return;
     }
+
+    // ── Decrement stock after successful order ────────────────────────────────
+    // Fire-and-forget — never block the success UX on stock sync
+    decrementStockForOrder(cartItems);
+
+    setIsSubmitting(false);
+    toast.success('Order placed successfully!');
+    clearCart();
+    navigate('/order-confirmation');
   };
 
   return (

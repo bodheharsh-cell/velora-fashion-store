@@ -44,9 +44,12 @@ function AdminDashboard() {
         totalCustomers: customersCount,
       });
 
-      // Low Stock
-      const lowStock = products.filter(p => p.stock < 10).slice(0, 5);
-      setLowStockProducts(lowStock);
+      // Stock alerts: products with stock < 10 (includes 0)
+      const alertProducts = products
+        .filter(p => p.stock < 10)
+        .sort((a, b) => a.stock - b.stock) // most critical first
+        .slice(0, 6);
+      setLowStockProducts(alertProducts);
 
       // Recent Orders
       setRecentOrders(orders.slice(0, 5));
@@ -68,7 +71,7 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-light tracking-tight uppercase">Dashboard Overview</h1>
+      <h1 className="text-lg sm:text-2xl font-light tracking-tight uppercase">Dashboard Overview</h1>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -105,29 +108,29 @@ function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Recent Orders */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-sm shadow-sm">
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-sm shadow-sm min-w-0">
+          <div className="p-4 sm:p-6 border-b border-gray-100 flex justify-between items-center">
             <h2 className="text-sm font-semibold tracking-widest uppercase">Recent Orders</h2>
             <Link to="/admin/orders" className="text-xs text-gray-500 hover:text-black">View All</Link>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-3 font-medium">Order ID</th>
-                  <th className="px-6 py-3 font-medium">Customer</th>
-                  <th className="px-6 py-3 font-medium">Status</th>
-                  <th className="px-6 py-3 font-medium text-right">Total</th>
+                  <th className="px-3 sm:px-6 py-3 font-medium">Order ID</th>
+                  <th className="px-3 sm:px-6 py-3 font-medium">Customer</th>
+                  <th className="px-3 sm:px-6 py-3 font-medium">Status</th>
+                  <th className="px-3 sm:px-6 py-3 font-medium text-right">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {recentOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-mono text-xs text-gray-500">{order.id.split('-')[0]}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900">{order.customer_name}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs text-gray-500">{order.id.split('-')[0]}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-gray-900">{order.customer_name}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                         order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
                         order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
@@ -136,12 +139,12 @@ function AdminDashboard() {
                         {order.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-medium">{formatPrice(order.total)}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-medium">{formatPrice(order.total)}</td>
                   </tr>
                 ))}
                 {recentOrders.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="px-6 py-8 text-center text-gray-500">No orders yet.</td>
+                    <td colSpan="4" className="px-3 sm:px-6 py-8 text-center text-gray-500">No orders yet.</td>
                   </tr>
                 )}
               </tbody>
@@ -149,35 +152,45 @@ function AdminDashboard() {
           </div>
         </div>
 
-        {/* Low Stock Alerts */}
+        {/* Stock Alerts */}
         <div className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+          <div className="p-4 sm:p-6 border-b border-gray-100 flex justify-between items-center">
             <h2 className="text-sm font-semibold tracking-widest uppercase flex items-center gap-2 text-red-600">
-              <AlertCircle size={16} /> Low Stock
+              <AlertCircle size={16} /> Stock Alerts
             </h2>
             <Link to="/admin/products" className="text-xs text-gray-500 hover:text-black">Manage</Link>
           </div>
-          <div className="p-6 flex-1">
-            <div className="space-y-4">
+          <div className="p-4 sm:p-6 flex-1">
+            <div className="space-y-3">
               {lowStockProducts.map(product => (
-                <div key={product.id} className="flex justify-between items-center pb-4 border-b border-gray-50 last:border-0 last:pb-0">
-                  <div className="flex gap-3 items-center">
-                    <img src={product.image} alt={product.name} className="w-10 h-12 object-cover bg-gray-50" />
-                    <div>
+                <div key={product.id} className="flex justify-between items-center pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                  <div className="flex gap-3 items-center min-w-0">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-9 h-11 object-cover bg-gray-50 flex-shrink-0 rounded-sm"
+                    />
+                    <div className="min-w-0">
                       <p className="text-sm font-medium text-gray-900 line-clamp-1">{product.name}</p>
                       <p className="text-xs text-gray-500">{product.category}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                      {product.stock} left
-                    </span>
+                  <div className="text-right flex-shrink-0 ml-3">
+                    {product.stock === 0 ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                        Out of Stock
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                        {product.stock} left
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
               {lowStockProducts.length === 0 && (
                 <div className="text-center text-gray-500 text-sm py-8">
-                  All products are sufficiently stocked.
+                  ✓ All products are well stocked.
                 </div>
               )}
             </div>

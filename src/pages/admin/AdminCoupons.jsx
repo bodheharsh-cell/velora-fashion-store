@@ -42,11 +42,11 @@ function AdminCoupons() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-light tracking-tight uppercase">Coupons</h1>
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 sm:mb-8 gap-3">
+        <h1 className="text-lg sm:text-2xl font-light tracking-tight uppercase">Coupons</h1>
         <button 
           onClick={() => setIsAdding(!isAdding)}
-          className="bg-black text-white px-4 py-2 text-sm font-semibold tracking-widest uppercase flex items-center gap-2 hover:bg-gray-900 transition-colors"
+          className="bg-black text-white px-4 py-2 text-sm font-semibold tracking-widest uppercase flex items-center gap-2 hover:bg-gray-900 transition-colors self-start sm:self-auto"
         >
           <Plus size={16} /> Add Coupon
         </button>
@@ -55,7 +55,7 @@ function AdminCoupons() {
       {isAdding && (
         <div className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm mb-8">
           <h2 className="text-sm font-semibold tracking-widest uppercase mb-4 border-b border-gray-100 pb-2">Create New Coupon</h2>
-          <form onSubmit={handleAddCoupon} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <form onSubmit={handleAddCoupon} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
             <div>
               <label className="block text-xs text-gray-500 uppercase tracking-widest mb-2">Code</label>
               <input 
@@ -96,35 +96,36 @@ function AdminCoupons() {
       )}
 
       <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold tracking-widest uppercase text-gray-500">
             <tr>
-              <th className="px-6 py-4">Code</th>
-              <th className="px-6 py-4">Discount</th>
-              <th className="px-6 py-4">Expiry Date</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-right">Actions</th>
+              <th className="px-3 sm:px-6 py-4">Code</th>
+              <th className="px-3 sm:px-6 py-4">Discount</th>
+              <th className="px-3 sm:px-6 py-4">Expiry Date</th>
+              <th className="px-3 sm:px-6 py-4">Status</th>
+              <th className="px-3 sm:px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {coupons.map(coupon => (
               <tr key={coupon.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 font-mono font-medium text-gray-900 flex items-center gap-2">
-                  <Tag size={14} className="text-gray-400" />
+                <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono font-medium text-gray-900 flex items-center gap-2">
+                  <Tag size={14} className="text-gray-400 flex-shrink-0" />
                   {coupon.code}
                 </td>
-                <td className="px-6 py-4 text-gray-600 font-medium">
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-600 font-medium">
                   {coupon.discount}% OFF
                 </td>
-                <td className="px-6 py-4 text-gray-500">
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-500">
                   {new Date(coupon.expiry).toLocaleDateString()}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-3 sm:px-6 py-3 sm:py-4">
                   <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${coupon.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                     {coupon.active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                   <button 
                     onClick={() => toggleStatus(coupon.id)}
                     className={`text-xs font-semibold px-3 py-1 rounded-sm border ${coupon.active ? 'text-gray-600 border-gray-300 hover:bg-gray-100' : 'text-green-600 border-green-200 hover:bg-green-50'}`}
@@ -136,6 +137,7 @@ function AdminCoupons() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

@@ -17,9 +17,9 @@ function AdminAnalytics() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-light tracking-tight uppercase">Analytics</h1>
-        <select className="border border-gray-300 text-sm py-2 px-4 outline-none focus:border-black rounded-sm bg-white">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+        <h1 className="text-lg sm:text-2xl font-light tracking-tight uppercase">Analytics</h1>
+        <select className="border border-gray-300 text-sm py-2 px-4 outline-none focus:border-black rounded-sm bg-white w-full sm:w-auto">
           <option>Last 30 Days</option>
           <option>Last 3 Months</option>
           <option>This Year</option>
@@ -48,17 +48,19 @@ function AdminAnalytics() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Mock Chart Area */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-sm shadow-sm p-6">
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-sm shadow-sm p-4 sm:p-6">
           <h2 className="text-sm font-semibold tracking-widest uppercase mb-6">Revenue Over Time</h2>
-          <div className="h-64 flex items-end justify-between gap-2 px-2 border-b border-l border-gray-100 pb-2">
-            {/* Simple CSS mock bars */}
-            {[40, 65, 45, 80, 55, 90, 75, 100, 60, 85, 70, 95].map((height, i) => (
-              <div key={i} className="w-full bg-gray-100 hover:bg-black transition-colors rounded-t-sm relative group cursor-pointer" style={{ height: `${height}%` }}>
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  Day {i+1}
+          <div className="overflow-x-auto">
+            <div className="h-64 flex items-end justify-between gap-2 px-2 border-b border-l border-gray-100 pb-2 min-w-[300px]">
+              {/* Simple CSS mock bars */}
+              {[40, 65, 45, 80, 55, 90, 75, 100, 60, 85, 70, 95].map((height, i) => (
+                <div key={i} className="w-full bg-gray-100 hover:bg-black transition-colors rounded-t-sm relative group cursor-pointer" style={{ height: `${height}%` }}>
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Day {i+1}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           <div className="flex justify-between mt-4 text-xs text-gray-400">
             <span>May 1</span>
